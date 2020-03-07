@@ -38,6 +38,16 @@ def dict_demo():
     data_new= tranfer.fit_transform(data)
     print('data_new:\n',data_new)
     print('特征名字:\n',tranfer.get_feature_names())
+    new_df= pd.DataFrame(data_new,columns=tranfer.get_feature_names())
+    print(new_df)
+
+def search_stopwords(string):
+    stopwords = []
+    with open('data/stopwords/stopword_ch_en.txt') as f:
+        for word in f:
+            if word.strip() in string:
+                stopwords.append(word.strip())
+    return stopwords    
 
 def count_demo():
     '''文本特征抽取CountVectorizer,统计样本中特征词的个数'''
@@ -60,6 +70,7 @@ def count_chinese_demo():
     print('特征名字:\n',tranfer.get_feature_names())
 
 def cut_word(text):
+    """使用jieba对文本进行分词操作"""
     return ' '.join(list(jieba.cut(text)))
 
 def count_chinese_demo2():
@@ -90,28 +101,37 @@ def tfidf_demo():
     print(data_new.toarray())
     print('特征名字:\n',tranfer.get_feature_names())
 
+
 def tfidf_demo2():
-    '''用tf-dif的方法进行文本特征抽取，tf(词频)*dif(词的权重对数)较之前的方法更科学更常用'''
-    data='''当日新增治愈出院病例2742例，解除医学观察的密切接触者7650人，重症病例减少304例。
-        截至3月2日24时，据31个省（自治区、直辖市）和新疆生产建设兵团报告，现有确诊病例30004例（其中重症病例6806例），累计治愈出院病例47204例，累计死亡病例2943例，累计报告确诊病例80151例，现有疑似病例587例。累计追踪到密切接触者664899人，尚在医学观察的密切接触者40651人。
-        湖北新增确诊病例114例（武汉111例），新增治愈出院病例2410例（武汉1846例），新增死亡病例31例（武汉24例），现有确诊病例28216例（武汉24144例），其中重症病例6593例（武汉6020例）。累计治愈出院病例36167例（武汉23031例），累计死亡病例2834例（武汉2251例），累计确诊病例67217例（武汉49426例）。新增疑似病例64例（武汉62例），现有疑似病例434例（武汉316例）。
-        累计收到港澳台地区通报确诊病例151例：香港特别行政区100例（出院36例，死亡2例），澳门特别行政区10例（出院8例），台湾地区41例(出院12例，死亡1例)。'''
+    '''
+    用tf-dif的方法进行文本特征抽取，tf(词频)*dif(词的权重对数)较之前的方法更科学更常用
+    '''
+    data = '''近日，司法部、国家移民管理局在京联合召开《中华人民共和国外国人永久居留管理条例》（征求意见稿）征求意见座谈会。部分企事业单位人员、社区干部、居民和专家学者应邀参加会议，对《条例》（征求意见稿）进行深入讨论，发表意见建议。
+    与会人员认为，通过赋予外国人永久居留资格吸引人才、专业人士和域外资本参与本国建设，促进经济社会发展，是许多国家在发展进程中的普遍做法。为了进一步规范和改进外国人永久居留审批管理工作，适应深化改革扩大开放、加快建设社会主义现代化国家的需要，促进中外交往，我国有必要在现行制度和实践的基础上制订外国人永久居留管理条例。
+    与会人员指出，《条例》征求意见以来，社会高度关注，有的担心有关资格、条件设计是否合理，会不会出现大量境外人员挤占国内就业岗位和社会公共福利资源问题，也有的反映一些规定过于原则、不够细化，顾虑实施后出现管理漏洞、难以监督问题，与会人员建议结合我国国情以及国际有益做法，进一步评估论证，完善优化相关制度设计，使申请永久居留的资格、条件和程序更周延、更严密。
+    司法部有关负责人表示，《条例》目前尚处于向社会征求意见阶段，我们将按照科学立法、民主立法、依法立法的要求，对公众所提的意见建议，认真深入予以研究。《条例》在充分吸纳公众意见、进一步修改完善之前不会仓促出台。
+    国家移民管理局有关负责人表示，高度重视公众对完善境内外国人管理工作的关切，在依法保护广大中外出入境人员合法权益的同时，将进一步强化对非法入境、非法滞留人员检查、遣返力度，依法严肃查处相关违法犯罪活动，维护正常的出入境秩序。'''
+    stopwords = search_stopwords(data)
+    print('stopwords',stopwords)
+
     datalist = data.split('。')
-    print(datalist)
+    # print(datalist)
     data_cut = []
     for sent in datalist:
         data_cut.append(cut_word(sent))
     # print(data_cut)
+
     #1.实例化转换器类
-    tranfer=TfidfVectorizer()#参数stop_word=[]可以制定不进行分类抽取的词
+    tranfer = TfidfVectorizer(stop_words=stopwords)  # 参数stop_words=[]可以制定不进行分类抽取的词
     #2、调用fit_transform
     data_new = tranfer.fit_transform(data_cut)
     # print(data_new.toarray())
-    # print('特征名字:\n',tranfer.get_feature_names())
+    print('特征名字:\n',tranfer.get_feature_names())
 
     pca_tranfer = PCA(n_components=0.95)#小数代表百分比，整数代表维数
     data_pca = pca_tranfer.fit_transform(data_new.toarray())
     print(data_pca)
+    print(data_pca.shape)
 
 
 def minmax_demo():
@@ -169,10 +189,10 @@ def pca_demo():
     data = np.random.random(49).reshape([7,7])
     print(data)
 
-    1、实例化一个转换器类
+    # 1、实例化一个转换器类
     transfer = PCA(n_components=0.95)#小数代表百分比，整数代表维数
 
-    2、调用fit_transform
+    # 2、调用fit_transform
     data_new = transfer.fit_transform(data)
     print("data_new:\n", data_new)
     
@@ -186,8 +206,8 @@ if __name__ == '__main__':
     # count_chinese_demo()
     # count_chinese_demo2()
     # tfidf_demo()
-    # tfidf_demo2()
+    tfidf_demo2()
     # minmax_demo()
     # stand_demo()
     # variance_demo()
-    pca_demo()
+    # pca_demo()
