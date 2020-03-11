@@ -13,9 +13,9 @@ from sklearn.linear_model import LogisticRegression,LogisticRegressionCV
 from sklearn.metrics import classification_report,roc_auc_score
 
 import pandas as pd
-import logging
-logging.basicConfig(filename="data/day2_1.log",level=logging.INFO,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+# import logging
+# logging.basicConfig(filename="data/day2_1.log",level=logging.INFO,
+                    # format='%(asctime)s - %(levelname)s - %(message)s')
 
 def knn_iris():
     '''案例1：K近邻对鸢尾花种类预测'''
@@ -83,16 +83,15 @@ def nb_demo():
     '''用朴素贝叶斯算法对新闻分类'''
     #1、获取数据
     news = fetch_20newsgroups(subset ='all')
+    # print(news.data[1])
     # print(news)
-    print(news.target)
-    # logging.info(news.data)
-    # logging.info(news.target)
+
 
     # 2、划分数据集
     x_train,x_test,y_train,y_test = train_test_split(news.data,news.target)
     
     #3、特征工程，文本特征读取-tfidf
-    transfor = TfidfVectorizer(min_df=2, #严格忽略低于给出阈值的文档频率的词条，语料指定的停用词。
+    transfor = TfidfVectorizer(min_df=4, #严格忽略低于给出阈值的文档频率的词条，语料指定的停用词。
                             # analyzer='word', #定义特征为词（word）
                             # ngram_range=(1, 3), #ngram_range(min,max)是指将text分成min，min+1，min+2,.........max 个不同的词组
                             # use_idf=1, #使用idf重新计算权重
@@ -102,7 +101,8 @@ def nb_demo():
                             )
     x_train = transfor.fit_transform(x_train)
     x_test = transfor.transform(x_test)
-    
+    print(x_train[1])
+    print(x_train.shape)
     #4、朴素贝叶斯算法预估器流程
     estimator = MultinomialNB()
     estimator.fit(x_train,y_train)
@@ -110,13 +110,10 @@ def nb_demo():
     #方法1，直接比对
     y_predict = estimator.predict(x_test)
     print('y_predict\n',y_predict)
-    logging.info(y_predict)
     print('直接比对真实值和预测值\n',y_test == y_predict)
-    logging.info(y_test == y_predict)
     #方法2，计算准确率
     score = estimator.score(x_test,y_test)
     print('准确率为：\n',score)
-    logging.info(score)
 
 def tree_iris():
     '''用决策树对鸢尾花种类预测'''
@@ -285,9 +282,9 @@ def titanic_logi():
     # print('交叉验证结果:\n',estimator.cv_results_)
 
 if __name__ == "__main__":
-    knn_iris()
-    knn_iris_gscv()
-    # nb_demo()
+    # knn_iris()
+    # knn_iris_gscv()
+    nb_demo()
     # tree_iris()
     # titanic_tree()
     # titanic_forest()

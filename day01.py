@@ -44,9 +44,10 @@ def dict_demo():
 def search_stopwords(string):
     stopwords = []
     with open('data/stopwords/stopword_ch_en.txt') as f:
-        for word in f:
-            if word.strip() in string:
-                stopwords.append(word.strip())
+        lines = f.readlines()
+    for word in lines:
+        if word.strip() in string:
+            stopwords.append(word.strip())
     return stopwords    
 
 def count_demo():
@@ -206,8 +207,8 @@ if __name__ == '__main__':
     # count_chinese_demo()
     # count_chinese_demo2()
     # tfidf_demo()
-    tfidf_demo2()
+    # tfidf_demo2()
     # minmax_demo()
     # stand_demo()
     # variance_demo()
-    # pca_demo()
+    pca_demo()
