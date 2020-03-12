@@ -78,6 +78,8 @@ def knn_iris_gscv():
     print('最佳估计器：\n',estimator.best_estimator_)
     #交叉验证结果
     print('交叉验证结果:\n',estimator.cv_results_)
+    best_model = estimator.best_estimator_
+    print(best_model.score(x_test, y_test))
 
 def nb_demo():
     '''用朴素贝叶斯算法对新闻分类'''
@@ -283,8 +285,8 @@ def titanic_logi():
 
 if __name__ == "__main__":
     # knn_iris()
-    # knn_iris_gscv()
-    nb_demo()
+    knn_iris_gscv()
+    # nb_demo()
     # tree_iris()
     # titanic_tree()
     # titanic_forest()
