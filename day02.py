@@ -1,7 +1,7 @@
 from sklearn.datasets import load_iris
 from sklearn.datasets import fetch_20newsgroups
 from sklearn.model_selection import train_test_split 
-from sklearn.model_selection import GridSearchCV#网格搜索与交叉验证
+from sklearn.model_selection import GridSearchCV, RandomizedSearchCV#网格搜索与交叉验证
 from sklearn.feature_extraction import DictVectorizer#字典特征抽取
 from sklearn.feature_extraction.text import TfidfVectorizer#tf_idf特征抽取
 from sklearn.preprocessing import StandardScaler#无量刚化：标准化
@@ -11,8 +11,9 @@ from sklearn.naive_bayes import MultinomialNB#朴素贝叶斯算法
 from sklearn.ensemble import RandomForestClassifier#随机森林算法
 from sklearn.linear_model import LogisticRegression,LogisticRegressionCV
 from sklearn.metrics import classification_report,roc_auc_score
-
+import sklearn
 import pandas as pd
+print(sklearn.__version__)
 # import logging
 # logging.basicConfig(filename="data/day2_1.log",level=logging.INFO,
                     # format='%(asctime)s - %(levelname)s - %(message)s')
@@ -54,11 +55,12 @@ def knn_iris_gscv():
     # 4）KNN预估器流程
     estimator = KNeighborsClassifier()#n_neighbors即k值在后面调优，这里不设置
 
+    
     #加入网格搜索与k值调优
     #z准备参数
-    param_dict = {'n_neighbors':[1,3,5,7,9,11]}
-    estimator = GridSearchCV(estimator, param_grid=param_dict,cv=10)#10指10折调优
-    
+    param_dict = {'n_neighbors':range(1,21,2)}
+    # estimator = GridSearchCV(estimator, param_grid=param_dict,cv=10)#10指10折调优
+    estimator = RandomizedSearchCV(estimator, param_dict, cv=10)
     estimator.fit(x_train,y_train)
     # 5）模型评估
     #方法1，直接比对
