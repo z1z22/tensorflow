@@ -113,7 +113,7 @@ def tfidf_demo2():
     司法部有关负责人表示，《条例》目前尚处于向社会征求意见阶段，我们将按照科学立法、民主立法、依法立法的要求，对公众所提的意见建议，认真深入予以研究。《条例》在充分吸纳公众意见、进一步修改完善之前不会仓促出台。
     国家移民管理局有关负责人表示，高度重视公众对完善境内外国人管理工作的关切，在依法保护广大中外出入境人员合法权益的同时，将进一步强化对非法入境、非法滞留人员检查、遣返力度，依法严肃查处相关违法犯罪活动，维护正常的出入境秩序。'''
     stopwords = search_stopwords(data)
-    print('stopwords',stopwords)
+    print('stopwords:\n',stopwords)
 
     datalist = data.split('。')
     # print(datalist)
