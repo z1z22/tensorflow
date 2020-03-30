@@ -7,10 +7,14 @@ from sklearn.preprocessing import MinMaxScaler#做数据归一化处理
 from sklearn.preprocessing import StandardScaler#做数据标准化处理
 from sklearn.feature_selection import VarianceThreshold#过滤方差大于某个数的特征
 from sklearn.decomposition import PCA#PCA降维
+from sklearn.cluster import KMeans
 import jieba#中文分词处理
 from scipy.stats import pearsonr#皮尔森相关系数
 import numpy as np
 import pandas as pd
+from collections import Counter
+
+import re
 
 
 def dataset_demo():
@@ -23,9 +27,9 @@ def dataset_demo():
     print('查看数据：\n',iris.data)
     #数据集划分
     x_train,x_test,y_train,y_test=train_test_split(iris.data,iris.target,test_size=0.2)
-    print('x_train',x_train.shape)
-    print('x_test',x_test.shape)
-    print('y_test',y_test.shape)
+    print('x_train shape',x_train.shape)
+    print('x_test shape',x_test.shape)
+    print('y_test shape',y_test.shape)
     print('y_train',y_train)
 
 
@@ -87,6 +91,44 @@ def count_chinese_demo2():
     data_new = tranfer.fit_transform(data_cut)
     print(data_new.toarray())
     print('特征名字:\n',tranfer.get_feature_names())
+
+def txt_demo():
+    '''将txt转化为向量'''
+    stopwords = []
+    with open('data/stopwords/stopword_ch_en.txt') as f:
+        lines = f.readlines()
+    for word in lines:
+        stopwords.append(word.strip())
+
+    with open('data/tiaopi.txt', 'r') as f:
+        txt = f.readlines()
+    txt_cut_list = []
+    for line in txt:
+        cut_w = cut_word(line.strip())
+        cut_w = re.sub(r'[" "]+', " ", cut_w)
+        txt_cut_list.append(cut_w)
+        
+    print(txt_cut_list)
+
+    tranfer = TfidfVectorizer(stop_words=stopwords)  # 参数stop_word=[]可以制定不进行分类抽取的词
+    #2、调用fit_transform
+    data_new = tranfer.fit_transform(txt_cut_list)
+    print(data_new.toarray().shape)
+    print('特征名字:\n', len(tranfer.get_feature_names()))
+
+    pca_tranfer = PCA(n_components=0.95)  # 小数代表百分比，整数代表维数
+    data_pca = pca_tranfer.fit_transform(data_new.toarray())
+    # print(data_pca)
+    print(data_pca.shape)
+    estimator = KMeans(n_clusters=10)
+    estimator.fit(data_pca)
+
+    y_predict = estimator.predict(data_pca)
+    print(len(y_predict))
+    print(y_predict)
+    print(Counter(y_predict))
+
+
 
 def tfidf_demo():
     '''用tf-dif的方法进行文本特征抽取，tf(词频)*dif(词的权重对数)较之前的方法更科学更常用'''
@@ -206,9 +248,10 @@ if __name__ == '__main__':
     # count_demo()
     # count_chinese_demo()
     # count_chinese_demo2()
+    txt_demo()
     # tfidf_demo()
     # tfidf_demo2()
     # minmax_demo()
     # stand_demo()
     # variance_demo()
-    pca_demo()
+    # pca_demo()
