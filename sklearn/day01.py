@@ -71,7 +71,8 @@ def count_chinese_demo():
     tranfer=CountVectorizer()#参数stop_word=[]可以制定不进行分类抽取的词
     #2、调用fit_transform
     data_new = tranfer.fit_transform(data)
-    print(data_new.toarray())
+    print(data_new)
+    print(data_new.toarray())#toarray将稀疏矩阵转化为普通矩阵存储
     print('特征名字:\n',tranfer.get_feature_names())
 
 def cut_word(text):
@@ -95,31 +96,35 @@ def count_chinese_demo2():
 def txt_demo():
     '''将txt转化为向量'''
     stopwords = []
-    with open('data/stopwords/stopword_ch_en.txt') as f:
-        lines = f.readlines()
-    for word in lines:
-        stopwords.append(word.strip())
+    # with open('data/stopwords/stopword_ch_en.txt') as f:
+    #     lines = f.readlines()
+    # for word in lines:
+    #     stopwords.append(word.strip())
 
     with open('data/tiaopi.txt', 'r') as f:
         txt = f.readlines()
     txt_cut_list = []
+    stopwords_list = []
     for line in txt:
-        cut_w = cut_word(line.strip())
-        cut_w = re.sub(r'[" "]+', " ", cut_w)
-        txt_cut_list.append(cut_w)
+        stopwords_list += search_stopwords(line)
+        txt_cut_list.append(cut_word(line))
+    stopwords = list(set(stopwords_list))
+    print ('stopwords: ', stopwords)
+    print('-------------------------------------')
         
-    print(txt_cut_list)
+    print('语句量:  ',len(txt_cut_list))
 
-    tranfer = TfidfVectorizer(stop_words=stopwords)  # 参数stop_word=[]可以制定不进行分类抽取的词
+    # 参数stop_word=[]可以制定不进行分类抽取的词
+    tranfer = TfidfVectorizer(stop_words=stopwords)
     #2、调用fit_transform
     data_new = tranfer.fit_transform(txt_cut_list)
-    print(data_new.toarray().shape)
-    print('特征名字:\n', len(tranfer.get_feature_names()))
-
-    pca_tranfer = PCA(n_components=0.95)  # 小数代表百分比，整数代表维数
+    print('data_after_tfidf: ' ,data_new.toarray().shape)
+    print('特征名字:  ', len(tranfer.get_feature_names()))
+    
+    pca_tranfer = PCA(n_components=0.9)  # 小数代表百分比，整数代表维数
     data_pca = pca_tranfer.fit_transform(data_new.toarray())
     # print(data_pca)
-    print(data_pca.shape)
+    print('data_pca: ', data_pca.shape)
     estimator = KMeans(n_clusters=10)
     estimator.fit(data_pca)
 
