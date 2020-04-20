@@ -140,3 +140,5 @@ dmypy.json
 .ipynb
 data/
 tutorials/
+Deep-Learning-with-TensorFlow-book/
+Dive-into-DL-TensorFlow2.0/
