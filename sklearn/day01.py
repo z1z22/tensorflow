@@ -248,12 +248,12 @@ def pca_demo():
     # print(data.dot(datai))
 
 if __name__ == '__main__':
-    # dataset_demo()
+    dataset_demo()
     # dict_demo()
     # count_demo()
     # count_chinese_demo()
     # count_chinese_demo2()
-    txt_demo()
+    # txt_demo()
     # tfidf_demo()
     # tfidf_demo2()
     # minmax_demo()
